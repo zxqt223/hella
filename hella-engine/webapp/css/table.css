@@ -1,0 +1,57 @@
+/**
+*页签中的表格使用的样式
+*/
+th {
+	vertical-align: middle;
+	padding-top: 10px;
+	padding-right: 5px;
+	padding-bottom: 3px;
+	padding-left: 5px;
+	font: bold 17px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+	color: #4f6b72;
+	border-right: 1px solid #C1DAD7;
+	border-left: 1px solid #C1DAD7;
+	border-bottom: 1px solid #C1DAD7;
+	border-top: 1px solid #C1DAD7;
+	letter-spacing: 2px;
+	text-transform: uppercase;
+	text-align: left;
+ 	background: #F5F5DC no-repeat;
+}
+th.nobg {
+	border-top: 0;
+	border-left: 0;
+	border-right: 1px solid #C1DAD7;
+	background: none;
+}
+
+td {
+	vertical-align: middle;
+	padding-top: 10px;
+	padding-right: 5px;
+	padding-bottom: 3px;
+	padding-left: 5px;
+	border-right: 1px solid #C1DAD7;
+	border-left: 1px solid #C1DAD7;
+	border-bottom: 1px solid #C1DAD7;
+	background: #fff;
+	font-size: 14px;
+}
+
+td.alt {
+	background: #F5FAFA;
+	color: #797268;
+}
+th.spec {
+	border-left: 1px solid #C1DAD7;
+	border-top: 0;
+	background: #fff no-repeat;
+	font: bold 10px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+}
+th.specalt {
+	border-left: 1px solid #C1DAD7;
+	border-top: 0;
+	background: #f5fafa no-repeat;
+	font: bold 10px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+	color: #797268;
+}

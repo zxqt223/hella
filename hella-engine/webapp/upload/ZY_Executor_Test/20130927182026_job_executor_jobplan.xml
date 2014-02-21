@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jobPlans  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="job_executor_jobplan.xsd">
+	
+ <jobPlan id="1" name="test1" type="local" ignoreError="true" cronType="simple" cronExpression="120">
+		<start to="test" />
+		<action name="test" delayTime="1" delayType="soft">
+			<job mode="script" executeUser="zhangxianquan">
+				<executionContent>test/shell/xJobA1.sh</executionContent>
+				<jobClassName>com.zhangyue.hella.common.model.ShellXjob</jobClassName>
+				<args>access</args>
+				<description>syncLogDataD1 sync data to the bjcer.</description>
+			</job>
+			<ok to="end" />
+			<error to="fail" />
+		</action>
+		<fail name="fail" />
+		<end name="end" />
+	</jobPlan>
+	
+</jobPlans>

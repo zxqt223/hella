@@ -1,0 +1,8 @@
+到系统xjob目录下运行：
+vim .bash_profile
+
+export XJOB=/home/zhuhui/workspace/scheduler/sched-executor/xjob
+
+
+source .bash_profile
+

@@ -1,0 +1,31 @@
+﻿
+/* -----------------------
+   * tab *
+* ----------------------- */
+.l-tab-loading{ background-image:url('../images/ui/loading.gif');}
+ 
+.l-tab-links{background:url('../images/layout/tabs-bg.gif') repeat-x; height:37px; border-bottom:0px solid #D0D0D0;}
+.l-tab-links-left{background:url(../images/layout/tabs-tools.gif) 0px 0px;margin-top:12px}
+.l-tab-links-right{background:url(../images/layout/tabs-tools.gif) -51px 0px;margin-top:12px}
+.l-tab-links-left-over{ background-position:-17px 0px;}
+.l-tab-links-right-over{ background-position:-68px 0px;}
+.l-tab-links-left-invalid{ background-position:-34px 0px;}
+.l-tab-links-right-invalid{ background-position:-85px 0px;}
+.l-tab-links ul{padding-top:11px;height:37px; background:url('../images/layout/tabs-ul-bg.gif') no-repeat right top;}
+
+.l-tab-links li{ background:url(../images/layout/tabs-item-bg.gif) repeat-x left top; height:24px;line-height:24px; margin-top:3px;}
+.l-tab-links li.l-selected{background:url(../images/layout/tabs-item-selected.gif); height:26px;line-height:26px; margin-top:0px;}
+.l-tab-links li a{ margin-left:10px; margin-right:20px;}
+.l-tab-links li.l-selected a{ color:#d96203;}
+.l-tab-links-item-left{ background:url(../images/layout/tabs-item-left-bg.gif) no-repeat left top;}
+.l-tab-links-item-right{background:url(../images/layout/tabs-item-right-bg.gif) no-repeat left top;}
+
+.l-selected .l-tab-links-item-left{ background:url(../images/layout/tabs-item-left-selected.gif)}
+.l-selected .l-tab-links-item-right{background:url(../images/layout/tabs-item-right-selected.gif)}
+
+.l-tab-links-item-close{ top:7px; right:2px;background:url(../images/layout/icon-close.gif);}
+.l-tab-links-item-close-over{background:url(../images/layout/icon-close-over.gif);}
+    
+/* -----------------------
+   * easytab *
+* ----------------------- */ 

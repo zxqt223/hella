@@ -1,0 +1,116 @@
+使用手册：
+
+	sched定时任务调度系统是一个高可用的定时作业定制调度管理系统。该系统实现了作业的可靠调度，作业的工作流机制，作业的在线管理/异常预警通知等功能。
+
+一：编写本手册的目的
+   指导使用sched执行器的技术人员正确使用sched定时任务调度系统-执行器，避免误操作破坏生产环境
+二：术语解释　
+	sched：任务调度系统
+	sched-engine： 任务调度系统_引擎端,进行作业创建，调度通知/反馈等
+	sched-executor：任务调度系统_执行器,接收引擎端作业通知，执行并心跳通知作业执行进度到引擎端
+	executor.properties：执行端配置　
+	job_executor_jobplan.xml：执行计划　
+	job_executor_jobplan.xsd：执行计划XML Schema
+	Qjob:调度作业计划的作业。触发则会调度该作业计划的第一级XJOB。
+	Xjob:作业计划内包含的所有作业。
+	执行计划：一个执行器配置有一份客户端的执行计划。
+	作业计划：一份执行计划包括多个作业计划，作业计划包括：该计划名称/执行的时间 以及各个作业。
+	作业：一个作业计划配有一个或多个作业，作业之间可以配置依赖关系。
+
+三: 基本原理
+	Sched系统包括引擎端/执行器，其中引擎端部署一组master/slave，执行器部署多套master/slave ,每组都分配唯一的集群编号。
+		系统组件之间采用zookeeper进行配置管理和mina进行RPC通讯。
+	引擎端：
+		引擎端启动时会检查是否有master节点。如果无则注册为master，然后监听自身节点。如果自身结点失效则自动转为nutral中立状态，停止服务，并进行对master监听。
+		如果已经存在master则转换为slave，并进行对master节点监听。如果master节点失效，slave和nutral状态的所有节点会抢占注册成为master。
+	执行器：
+		1初始化ice服务对引擎端进行监听。
+		2判断是否存在master结点，如果不存在，则创建 master结点，并获取引擎端地址，注册自身信息到引擎端。
+		3监听引擎端节点，如果引擎端失效则停止服务，如果接收到引擎端创建事件则，则恢复服务。
+		4解析执行器配置的作业计划，如果该执行器无作业记录，或执行计划version高于历史记录 ，执行器会解析客户端配置的作业计划 ，引擎端会根据该执行计划创建各种JOB.并运转。
+		5如果执行器为slave，则监听master，如果失效则注册自身为master.接收引擎端作业执行通知。
+	系统已经全部启动，引擎端JOB触发时，会找到注册该任务的执行器进行任务通知;
+	执行器接收到任务进行执行，并实时通过心跳反馈执行进度。引擎端接收到心跳，进行不同结果的处理。
+	比如：作业失败时进行失败处理和短信邮件通知，作业成功执行则会检查依赖作业的下级作业进行通知。
+四: demo实例运行步骤：
+ 	1.下载执行器，并解压缩
+ 	2.解压后有bin，conf，lib，logs，xjob目录，  
+		bin里包含启动/停止执行器客户端的脚本。
+		conf包含：executor.properties，job_executor_jobplan.xml，job_executor_jobplan.xsd，log4j.properties
+		lib:运行所需jar包。
+		logs:系统日志
+		xjob:客户端作业运行环境
+	3 环境变量配置 
+		xjob目录下为所有用户的运行环境。第一级目录为用户名 第二级自定义。
+		为了方便使用，可以在xjob目录下可以配置环境变量：
+		export XJOB=当前xjob目录 例如：/home/sched/sched-executor-1.0-SNAPSHOT/xjob
+		目录xjob/test 下面有 shell，lib，data目录。shell存放运行的脚本，lib存放运行所需的jar等，data可以存运行产生的文件数据。
+	4 手动执行xjob/test/shell下的脚本，查看脚本运行是否正常。xJobA1/2.sh打印日志，xJobB.sh会在xjob/data目录创建文件
+	5 检测是否可以连接引擎端
+	  ping executor.properties中的hella.zookeeper.quorum地址测试网络是否正常
+	5 检查执行计划
+	  查看conf/job_executor_jobplan.xml文件
+		<?xml version="1.0" encoding="UTF-8"?>
+		<jobPlans version='100020' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			xsi:noNamespaceSchemaLocation="job_executor_jobplan.xsd">
+			<jobPlan id='1' name='testXJobA' type="simple" cronExpression='60' ignoreError='false'>
+				<job name='xJobA1' executionMode='shell'>
+					<executionContent>test/shell/xJobA1.sh</executionContent>
+					<jobClassName>com.renren.sched.common.model.ShellXjob</jobClassName>
+					<jobData></jobData>
+					<description>TEST：第一级结点：60秒轮循一次</description>
+				</job>
+				<job name='xJobA2' executionMode='shell' precursorJobName="xJobA1">
+					<executionContent>test/shell/xJobA2.sh</executionContent>
+					<jobClassName>com.renren.sched.common.model.ShellXjob</jobClassName>
+					<jobData></jobData>
+					<description>TEST：依赖于xJobA</description>
+				</job>
+			</jobPlan>
+			<jobPlan id='2' name='testXJobB' type="cron" cronExpression='0 59 0-23 * * ?' ignoreError='false'>
+				<job name='xJobB' executionMode='shell'>
+					<executionContent>test/shell/xJobB.sh</executionContent>
+					<jobClassName>com.renren.sched.common.model.ShellXjob</jobClassName>
+					<jobData></jobData>
+					<description>TEST：复杂表达式：每小时59分执行并生成相应文件</description>
+				</job>
+			</jobPlan>
+		</jobPlans>
+	6 启动执行器
+	执行bin/start.sh 
+	日志输出：“Success to start master executor!” 或 “Success to start slave executor!” 则启动成功。
+	7 查看作业执行情况
+	http://10.2.8.41:8080/ 可以查看conf/job_executor_jobplan.xml执行计划的作业运行情况。
+	
+六  注意事项和常见问题：
+    1：executor.properties说明
+	    hella.zookeeper.quorum=10.2.8.41:2181 配置中心地址，上线时要改为生产环境地址
+		hella.zookeeper.timeout=6000 
+		cluster.id=ABCD 集群ID 注意：上线时要申请开通,ABCD为demo测试数据
+		executor.engine.heartbeat.initialdelay=10000 进度初始化延迟时间
+		executor.engine.heartbeat.period=10000 进度心跳周期
+		Ice.MessageSizeMax=2048
+		executor.progresscollector.level=RUN #ALL,RUN,DEBUG,SUCCESS 进度收集级别
+	2:shell脚本文件路径统一使用相对路径，确保移植后正常运行。如果要使用绝对路径，路径前缀统一引用$XJOB路径变量。
+	test目录为测试用例，用户目录统一建立则xjob目录下，并且使用唯一邮箱前缀命名，如hui.zhu，完整路径 xjob/hui.zhu/shell，xjob/hui.zhu/lib，xjob/hui.zhu/data。
+	3：执行shell如果要收集执行日志结果，则按照规范echo即可：
+	  在shell脚本中标记为“echo SCHED_JOB=具体日志信息”的格式，则执行器执行shell脚本时会收集该记录并记录到数据库，可以在管理平台查看。
+	4：job_executor_jobplan.xml文件配置
+	jobPlans—version 为当期执行计划的版本号。如果修改执行计划生效，必须对该版本号+1,否则无法更新执行计划
+	<jobPlan id='1' name='test1' type="simple" cronExpression='20' ignoreError='false'> 
+	id：该作业计划的ID 确保在该配置中唯一
+	name:该作业计划的名称 type:该作业计划触发的类型，有simple简单的数字配置 如：30秒 60秒等。cron型：则可以配置cron表达式。
+	cronExpression：执行触发规则 可以时数字或者cron表达式
+	ignoreError：容错处理 true:容错，执行出现异常时 下一次继续触发
+	false:不容错，执行异常时则暂停运行
+	delayTime:延迟执行时间，单位分钟
+	jobPlan-job-name 作业名称则该作业计划内唯一
+	jobPlan-job-executionMode： 作业执行模式 shell/http执行
+	jobPlan-job-executionContent： 执行内容 可以时url/或者shell路径：注意如果时shell则路径 为相对路径用户名+具体的shell路径例如： test/shell/zhuhui.sh系统执行时会自动补充为绝对路径：/home/zhuhui/workspace/scheduler/sched-executor/xjob/test/shell/zhuhui.sh
+	jobPlan-job-jobClassName： 作业执行类com.zhangyue.hella.common.model.ShellXjob 暂时为该类，以后可以扩展
+	jobPlan-job-jobData： 附加数据
+	jobPlan-job-description： 作业描述：最好时该作业的功能和作业执行的时间
+	5：Exception ”There is no available sched master!“ 没有可用引擎端，请申请开通。
+	6:Hella用户配置无密码切换用户 /etc/sudoers hella ALL=(ALL) NOPASSWD:ALL
+ 
+	 

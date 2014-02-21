@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jobPlans  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="job_executor_jobplan.xsd">
+	
+ <jobPlan id="2" name="multi_job_JP" type="local" ignoreError="true" cronType="simple" cronExpression="120">
+		<start to="fork1" />
+		<fork name="fork1" joinName="join1">
+			<path to="action11" />
+			<path to="action21" />
+		</fork>
+		<action name="action11" delayTime="1" delayType="soft">
+			<job mode="script" executeUser="zhangxianquan">
+				<executionContent>test/shell/xJobA1.sh</executionContent>
+				<jobClassName>com.zhangyue.hella.common.model.ShellXjob</jobClassName>
+				<args>XJob_A1</args>
+				<description>This is first job on executor : ZY_Executor_Test.</description>
+			</job>
+			<ok to="action12" />
+			<error to="fail" />
+		</action>
+		<action name="action12" delayTime="1" delayType="soft">
+			<job mode="script" executeUser="zhangxianquan">
+				<executionContent>test/shell/xJobA2.sh</executionContent>
+				<jobClassName>com.zhangyue.hella.common.model.ShellXjob</jobClassName>
+				<args>XJob_A2</args>
+				<description>This is second job on executor : ZY_Executor_Test.</description>
+			</job>
+			<ok to="join1" />
+			<error to="fail" />
+		</action>
+		<action name="action21" delayTime="1" delayType="soft">
+			<job mode="script" executeUser="zhangxianquan">
+				<executionContent>test/shell/xJobB1.sh</executionContent>
+				<jobClassName>com.zhangyue.hella.common.model.ShellXjob</jobClassName>
+				<args>XJob_B1</args>
+				<description>This is first job on executor : ZY_Executor_Test.</description>
+			</job>
+			<ok to="action22" />
+			<error to="fail" />
+		</action>
+		<action name="action22" delayTime="1" delayType="soft">
+			<job mode="script" executeUser="zhangxianquan">
+				<executionContent>test/shell/xJobB2.sh</executionContent>
+				<jobClassName>com.zhangyue.hella.common.model.ShellXjob</jobClassName>
+				<args>XJob_B2</args>
+				<description>This is second job on executor : ZY_Executor_Test.</description>
+			</job>
+			<ok to="join1" />
+			<error to="fail" />
+		</action>
+		<join name="join1" forkName="fork1" to="merge_action" />
+		<action name="merge_action" delayTime="1" delayType="soft">
+			<job mode="script" executeUser="zhangxianquan">
+				<executionContent>test/shell/xJobC.sh</executionContent>
+				<jobClassName>com.zhangyue.hella.common.model.ShellXjob</jobClassName>
+				<args>XJob_C</args>
+				<description>This is last job on executor : ZY_Executor_Test and merge above job output.</description>
+			</job>
+			<ok to="end" />
+			<error to="fail" />
+		</action>
+		<fail name="fail" />
+		<end name="end" />
+	</jobPlan>
+	
+</jobPlans>

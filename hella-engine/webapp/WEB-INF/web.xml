@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+	version="2.4">
+
+	<display-name>hella engine</display-name>
+	<filter>
+		<filter-name>LoginFilter</filter-name>
+		<filter-class>com.zhangyue.hella.engine.web.filter.LoginFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>LoginFilter</filter-name>
+		<url-pattern>*</url-pattern>
+	</filter-mapping>
+	<servlet>
+		<servlet-name>BaseAction</servlet-name>
+		<servlet-class>com.zhangyue.hella.engine.web.action.BaseAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>BaseAction</servlet-name>
+		<url-pattern>/bs/*</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet>
+		<servlet-name>WelcomeAction</servlet-name>
+		<servlet-class>com.zhangyue.hella.engine.web.action.WelcomeAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>WelcomeAction</servlet-name>
+		<url-pattern>/welcome/*</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>SysAction</servlet-name>
+		<servlet-class>com.zhangyue.hella.engine.web.action.admin.SysAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SysAction</servlet-name>
+		<url-pattern>/admin/sys/*</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>PlanSubscribeAction</servlet-name>
+		<servlet-class>com.zhangyue.hella.engine.web.action.admin.PlanSubscribeAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>PlanSubscribeAction</servlet-name>
+		<url-pattern>/admin/subscribe/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>JobPlanAction</servlet-name>
+		<servlet-class>com.zhangyue.hella.engine.web.action.job.JobPlanAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>JobPlanAction</servlet-name>
+		<url-pattern>/jobplan/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>JobStateAction</servlet-name>
+		<servlet-class>com.zhangyue.hella.engine.web.action.job.JobStateAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>JobStateAction</servlet-name>
+		<url-pattern>/jobstate/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>ServiceAction</servlet-name>
+		<servlet-class>com.zhangyue.hella.engine.web.action.ServiceAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ServiceAction</servlet-name>
+		<url-pattern>/service/*</url-pattern>
+	</servlet-mapping>
+
+
+
+	<!-- 出错页面定义 开始 -->
+	<error-page>
+		<exception-type>java.lang.Throwable</exception-type>
+		<location>/common/500.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>500</error-code>
+		<location>/common/500.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/common/404.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>403</error-code>
+		<location>/common/403.jsp</location>
+	</error-page>
+	<!-- 出错页面定义 结束 -->
+
+	<!-- 欢迎页面定义 -->
+	<welcome-file-list>
+		<welcome-file>login.jsp</welcome-file>
+	</welcome-file-list>
+	<session-config>
+		<session-timeout>60</session-timeout>
+	</session-config>
+</web-app>

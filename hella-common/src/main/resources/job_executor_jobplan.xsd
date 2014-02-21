@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<xs:import namespace="http://www.w3.org/2001/XMLSchema-instance"
+		schemaLocation="xsi.xsd" />
+		
+	<xs:element name="jobPlans">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element minOccurs="1" maxOccurs="unbounded" ref="jobPlan" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="jobPlan" >
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element minOccurs="1" maxOccurs="1" ref="start" />
+				<xs:choice maxOccurs="unbounded">
+					<xs:element minOccurs="0" maxOccurs="unbounded" ref="action" />
+					<xs:element minOccurs="0" maxOccurs="1" ref="fork" />
+					<xs:element minOccurs="0" maxOccurs="1" ref="join" />
+				</xs:choice>
+				<xs:element minOccurs="1" maxOccurs="1" ref="fail" />
+				<xs:element minOccurs="1" maxOccurs="1" ref="end" />
+			</xs:sequence>
+			<xs:attribute name="cronExpression" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="0" />
+						<xs:maxLength value="30" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			
+			<xs:attribute name="id" use="required" type="xs:integer" />
+			<xs:attribute name="ignoreError" use="optional" type="xs:boolean" />
+			<xs:attribute name="name" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="0" />
+						<xs:maxLength value="40" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute> 
+			<xs:attribute name="cronType" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="simple" />
+						<xs:enumeration value="cron" />
+						<xs:enumeration value="event" />
+					</xs:restriction>
+				</xs:simpleType> 
+			</xs:attribute>
+			<xs:attribute name="type" use="optional">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="local" />
+						<xs:enumeration value="distributed" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="event" use="optional">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="start">
+		<xs:complexType>
+			<xs:attribute name="to" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="0" />
+						<xs:maxLength value="40" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="executorClusterID" use="optional">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="0" />
+						<xs:maxLength value="20" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="action">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="job">
+					<xs:sequence>
+						<xs:element ref="ok" />
+						<xs:element ref="error" />
+					</xs:sequence>
+					<xs:attribute name="delayTime" use="optional" type="xs:integer" />
+					<xs:attribute name="delayType" use="optional">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="soft" />
+								<xs:enumeration value="hard" />
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:attribute>
+					<xs:attribute name="errorMaxRedoTimes" use="optional"
+						type="xs:integer" />
+					<xs:attribute name="name" use="required">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:minLength value="0" />
+								<xs:maxLength value="40" />
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:attribute>
+					<xs:attribute name="errorRedoPeriod" use="optional" type="xs:integer" />
+					<xs:attribute name="executorClusterID" use="optional">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="0" />
+							<xs:maxLength value="20" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ok">
+		<xs:complexType>
+			<xs:attribute name="to" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="0" />
+						<xs:maxLength value="40" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="error">
+		<xs:complexType>
+			<xs:attribute name="to" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="0" />
+						<xs:maxLength value="40" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="fork">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element minOccurs="2" maxOccurs="unbounded" ref="path" />
+			</xs:sequence>
+			<xs:attribute name="joinName" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="0" />
+						<xs:maxLength value="40" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="name" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="0" />
+						<xs:maxLength value="40" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="path">
+		<xs:complexType>
+			<xs:attribute name="to" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="0" />
+						<xs:maxLength value="40" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="join">
+		<xs:complexType>
+			<xs:attribute name="forkName" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="0" />
+						<xs:maxLength value="40" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="name" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="0" />
+						<xs:maxLength value="40" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="to" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="0" />
+						<xs:maxLength value="40" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="fail">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element minOccurs="0" maxOccurs="1" ref="job" />
+			</xs:sequence>
+			<xs:attribute name="name" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="0" />
+						<xs:maxLength value="40" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="executorClusterID" use="optional">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="0" />
+						<xs:maxLength value="20" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="end">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element minOccurs="0" maxOccurs="1" ref="job" />
+			</xs:sequence>
+			<xs:attribute name="name" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="0" />
+						<xs:maxLength value="40" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="executorClusterID" use="optional">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="0" />
+						<xs:maxLength value="20" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:complexType name="job">
+		<xs:sequence>
+			<xs:element minOccurs="0" maxOccurs="1" ref="job" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:element name="job">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="executionContent" />
+				<xs:element ref="jobClassName" />
+				<xs:element ref="args" />
+				<xs:element ref="description" />
+			</xs:sequence>
+			<xs:attribute name="mode" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="httpGet" />
+						<xs:enumeration value="httpPost" />
+						<xs:enumeration value="script" />
+					</xs:restriction>
+				</xs:simpleType> 
+			</xs:attribute>
+			<xs:attribute name="executeUser" use="optional">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="0" />
+						<xs:maxLength value="20" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="executionContent">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1" />
+				<xs:maxLength value="80" />
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="jobClassName">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1" />
+				<xs:maxLength value="80" />
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="args">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0" />
+				<xs:maxLength value="80" />
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="description">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0" />
+				<xs:maxLength value="80" />
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

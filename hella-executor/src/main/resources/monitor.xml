@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <property>
+    <name>email.from.address</name>
+    <value></value>
+    <description>email sender address</description>
+  </property>
+  <property>
+    <name>email.from.password</name>
+    <value></value>
+    <description>email sender password</description>
+  </property>
+</configuration>

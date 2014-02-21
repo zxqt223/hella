@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <property>
+    <name>email.service.url</name>
+    <value>http://cp.3vpm.cn/sendmail</value>
+  </property>
+  <property>
+    <name>email.alarm.handler</name>
+    <value>com.zhangyue.monitor.handler.impl.HTTPMailHandler</value>
+    <description>email handler warning message</description>
+  </property>
+</configuration>
